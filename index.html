@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصتي الدراسية المتقدمة - Study Hub Pro</title>
+    <!-- استيراد خط تجوال العربي الجميل من جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- استيراد أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة PDF.js لعرض ملفات الـ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --success: #4cc9f0;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* شريط أدوات تقسيم الشاشة العام */
+        .global-tools-bar {
+            max-width: 1200px;
+            margin: 1rem auto 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            flex: 1;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        /* نمط تقسيم الشاشة */
+        .container.split-view {
+            grid-template-columns: 1fr 1fr !important;
+        }
+
+        @media (max-width: 900px) {
+            .container.split-view {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 0.5rem;
+        }
+
+        /* تنسيق مؤقت البومودورو */
+        .timer-display {
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            color: var(--secondary);
+            margin: 0.5rem 0;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: auto;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:hover { background: var(--secondary); }
+
+        .btn-accent { background: var(--accent); }
+        .btn-accent:hover { background: #d90429; }
+        .btn-success { background: #2a9d8f; }
+        .btn-success:hover { background: #21867a; }
+        .btn-danger { background: #e63946; }
+        .btn-danger:hover { background: #c52230; }
+
+        /* تنسيق قائمة المهام */
+        .task-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .task-input-group input {
+            flex: 1;
+            padding: 0.6rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .task-input-group input:focus { border-color: var(--primary); }
+
+        .tasks-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 0.6rem 0.9rem;
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+        }
+
+        .task-item.completed span {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-item span {
+            cursor: pointer;
+            word-break: break-all;
+            flex: 1;
+            margin-left: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .delete-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1rem; }
+
+        /* قسم عارض وقارئ الـ PDF مع إمكانية الكتابة فوقه */
+        .pdf-viewer-card {
+            grid-column: 1 / -1;
+        }
+
+        .pdf-controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .pdf-canvas-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: #f1f3f5;
+            border: 2px dashed #ced4da;
+            border-radius: 10px;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .pdf-stack-wrapper {
+            position: relative;
+            margin: auto;
+        }
+
+        #pdfCanvas {
+            display: block;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        #pdfDrawCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        /* قسم السبورة التفاعلية العادية بدقة عالية HD */
+        .whiteboard-card {
+            grid-column: 1 / -1;
+        }
+
+        .board-tools {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover { transform: scale(1.1); }
+        .color-btn.active { border-color: var(--text-main); transform: scale(1.15); }
+
+        #blackPen { background-color: #000000; }
+        #redPen { background-color: #e63946; }
+        #greenPen { background-color: #2a9d8f; }
+
+        .size-selector {
+            padding: 0.3rem;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            background: #fff;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border: 2px dashed #ced4da;
+            border-radius: 10px;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        canvas#whiteboard {
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .recording-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            margin-left: 5px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* تنسيق رفع الصور */
+        .image-upload-container { margin-bottom: 0.8rem; }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: #f1f3f5;
+            border: 2px dashed #ced4da;
+            padding: 0.6rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .file-input-label:hover { background: #e9ecef; border-color: var(--primary); }
+        #imageInput, #pdfInput { display: none; }
+
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.6rem;
+            max-height: 180px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 80px;
+            background: #eee;
+            border: 1px solid #dee2e6;
+        }
+
+        .image-card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+
+        .image-card .delete-img-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Modal لعرض الصور */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content { max-width: 90%; max-height: 90vh; border-radius: 8px; }
+        .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; font-weight: bold; cursor: pointer; }
+
+        /* المفكرة السريعة */
+        textarea.notes-area {
+            width: 100%;
+            height: 170px;
+            padding: 0.7rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            resize: none;
+            outline: none;
+            flex: 1;
+        }
+        textarea.notes-area:focus { border-color: var(--primary); }
+        .notes-status { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+        /* الروابط السريعة */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.8rem;
+            flex: 1;
+        }
+
+        .quick-link {
+            background: #f1f3f5;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .quick-link i { font-size: 1.5rem; color: var(--primary); }
+        .quick-link:hover { background: var(--primary); color: white; }
+        .quick-link:hover i { color: white; }
+
+        /* شريط الحقوق أسفل الموقع */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #ffffff;
+            color: var(--text-muted);
+            border-top: 1px solid #e9ecef;
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .footer-brand a {
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .footer-brand a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-graduation-cap"></i> منصتي الدراسية Pro</h1>
+        <p>تصفح ملفات الـ PDF واكتب عليها مباشرة، ارسم بدقة فائقة، وسجل شرحك الصوتي والصوري!</p>
+    </header>
+
+    <!-- شريط أزرار تحكم التقسيم -->
+    <div class="global-tools-bar">
+        <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
+    </div>
+
+    <div class="container" id="mainContainer">
+        
+        <!-- قسم مؤقت بومودورو للتركيز -->
+        <div class="card" id="card-pomodoro">
+            <h2><i class="fa-solid fa-clock"></i> مؤقت التركيز</h2>
+            <div class="timer-display" id="timer">25:00</div>
+            <div class="timer-controls">
+                <button class="btn" onclick="startTimer()"><i class="fa-solid fa-play"></i></button>
+                <button class="btn btn-accent" onclick="pauseTimer()"><i class="fa-solid fa-pause"></i></button>
+                <button class="btn" style="background-color: var(--text-muted);" onclick="resetTimer()"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+        </div>
+
+        <!-- قسم مهام الدراسة -->
+        <div class="card" id="card-tasks">
+            <h2><i class="fa-solid fa-list-check"></i> قائمة المهام</h2>
+            <div class="task-input-group">
+                <input type="text" id="taskInput" placeholder="أضف مهمة جديدة...">
+                <button class="btn" onclick="addTask()"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <ul class="tasks-list" id="tasksList"></ul>
+        </div>
+
+        <!-- قسم عارض وملف الـ PDF مع إمكانية الكتابة الفوقية -->
+        <div class="card pdf-viewer-card" id="card-pdf">
+            <h2>
+                <i class="fa-solid fa-file-pdf"></i> قارئ وملفات الـ PDF (مع خاصية الكتابة فوقه)
+                <span id="pdfPageInfo" style="font-size: 0.85rem; margin-right: auto; font-weight: normal; color: var(--text-muted);"></span>
+            </h2>
+            <div class="image-upload-container">
+                <label for="pdfInput" class="file-input-label">
+                    <i class="fa-solid fa-file-arrow-up"></i> اختر ملف PDF لاستعراضه والكتابة عليه
+                </label>
+                <input type="file" id="pdfInput" accept="application/pdf" onchange="handlePdfUpload(event)">
+            </div>
+            <div class="pdf-controls" id="pdfToolbar" style="display: none;">
+                <button class="btn" onclick="prevPdfPage()"><i class="fa-solid fa-arrow-right"></i> السابقة</button>
+                <span id="pageCountDisplay" style="font-weight: 700; font-size: 0.9rem;">صفحة 0 / 0</span>
+                <button class="btn" onclick="nextPdfPage()"><i class="fa-solid fa-arrow-left"></i> التالية</button>
+                <button class="btn btn-accent" onclick="clearPdfDrawing()" style="margin-right: auto;"><i class="fa-solid fa-eraser"></i> مسح الكتابة عن هذه الصفحة</button>
+            </div>
+            <div class="pdf-canvas-container" id="pdfContainerWrapper">
+                <div class="pdf-stack-wrapper" id="pdfStackWrapper" style="display: none;">
+                    <canvas id="pdfCanvas"></canvas>
+                    <canvas id="pdfDrawCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم السبورة التفاعلية بدقة عالية HiDPI -->
+        <div class="card whiteboard-card" id="card-board">
+            <h2>
+                <i class="fa-solid fa-chalkboard"></i> السبورة التفاعلية الحرّة (دقة عالية HD)
+                <span id="recordingStatusText" style="font-size: 0.85rem; margin-right: 15px; font-weight: normal;"></span>
+            </h2>
+            <div class="board-tools">
+                <div class="tool-group">
+                    <button class="color-btn active" id="blackPen" onclick="setPenColor('#000000', this)" title="أسود"></button>
+                    <button class="color-btn" id="redPen" onclick="setPenColor('#e63946', this)" title="أحمر"></button>
+                    <button class="color-btn" id="greenPen" onclick="setPenColor('#2a9d8f', this)" title="أخضر"></button>
+                </div>
+                
+                <div class="tool-group">
+                    <label for="penSize" style="font-weight: 700; font-size: 0.85rem;">الخط:</label>
+                    <select id="penSize" class="size-selector" onchange="changePenSize(this.value)">
+                        <option value="2">رفيع</option>
+                        <option value="4" selected>متوسط</option>
+                        <option value="8">سميك</option>
+                        <option value="16">عريض</option>
+                    </select>
+                </div>
+
+                <div class="tool-group" style="margin-right: auto; gap: 0.4rem; flex-wrap: wrap;">
+                    <button class="btn btn-success" id="recordBoardBtn" onclick="toggleRecordBoard()"><i class="fa-solid fa-circle-dot"></i> تسجيل الشاشة والصوت</button>
+                    <button class="btn" onclick="downloadBoardImage()" style="background-color: var(--secondary);"><i class="fa-solid fa-image"></i> حفظ صورة</button>
+                    <button class="btn" onclick="setEraser()" style="background-color: var(--text-muted);"><i class="fa-solid fa-eraser"></i> ممحاة</button>
+                    <button class="btn btn-accent" onclick="clearBoard()"><i class="fa-solid fa-trash-can"></i> مسح</button>
+                </div>
+            </div>
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <canvas id="whiteboard"></canvas>
+            </div>
+        </div>
+
+        <!-- قسم الصور والجداول الدراسية -->
+        <div class="card" id="card-images">
+            <h2><i class="fa-solid fa-image"></i> الصور والملخصات</h2>
+            <div class="image-upload-container">
+                <label for="imageInput" class="file-input-label">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> رفع صورة سريعة
+                </label>
+                <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+            </div>
+            <div class="images-grid" id="imagesGrid"></div>
+        </div>
+
+        <!-- قسم المفكرة السريعة -->
+        <div class="card" id="card-notes">
+            <h2><i class="fa-solid fa-note-sticky"></i> مفكرة سريعة</h2>
+            <textarea class="notes-area" id="notesArea" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+            <div class="notes-status" id="notesStatus">تم الحفظ تلقائياً</div>
+        </div>
+
+        <!-- الروابط السريعة -->
+        <div class="card" style="grid-column: 1 / -1;" id="card-links">
+            <h2><i class="fa-solid fa-globe"></i> روابط سريعة</h2>
+            <div class="links-grid">
+                <a href="https://www.google.com" target="_blank" class="quick-link"><i class="fa-brands fa-google"></i><span>جوجل</span></a>
+                <a href="https://chatgpt.com" target="_blank" class="quick-link"><i class="fa-solid fa-robot"></i><span>مساعد ذكي</span></a>
+                <a href="https://translate.google.com" target="_blank" class="quick-link"><i class="fa-solid fa-language"></i><span>الترجمة</span></a>
+                <a href="https://www.youtube.com" target="_blank" class="quick-link"><i class="fa-brands fa-youtube"></i><span>يوتيوب</span></a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal لعرض الصورة مكبرة -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <footer>
+        <p>بالتوفيق في دراستك! 🚀</p>
+        <div class="footer-brand">تحت رعاية <a href="https://mrlight4321.github.io/nour-web/" target="_blank">nour.com</a></div>
+    </footer>
+
+    <script>
+        /* --- مؤقت بومودورو --- */
+        let timeLeft = 25 * 60;
+        let timerId = null;
+        let isRunning = false;
+        const timerDisplay = document.getElementById('timer');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerId = setInterval(() => {
+                    if (timeLeft > 0) { timeLeft--; updateTimerDisplay(); }
+                    else { clearInterval(timerId); isRunning = false; alert('انتهى وقت التركيز! خذ استراحة قصيرة ☕'); }
+                }, 1000);
+            }
+        }
+        function pauseTimer() { clearInterval(timerId); isRunning = false; }
+        function resetTimer() { clearInterval(timerId); isRunning = false; timeLeft = 25 * 60; updateTimerDisplay(); }
+
+        /* --- نظام تقسيم الشاشة (Split Screen) --- */
+        function toggleSplitScreen() {
+            const container = document.getElementById('mainContainer');
+            container.classList.toggle('split-view');
+            setTimeout(() => { resizeCanvas(); }, 300);
+        }
+
+        /* --- قائمة المهام --- */
+        const taskInput = document.getElementById('taskInput');
+        const tasksList = document.getElementById('tasksList');
+        let tasks = JSON.parse(localStorage.getItem('study_tasks')) || [];
+
+        function renderTasks() {
+            tasksList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = `task-item ${task.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <span onclick="toggleTask(${index})">${task.text}</span>
+                    <button class="delete-btn" onclick="deleteTask(${index})"><i class="fa-solid fa-trash"></i></button>
+                `;
+                tasksList.appendChild(li);
+            });
+            localStorage.setItem('study_tasks', JSON.stringify(tasks));
+        }
+        function addTask() {
+            const text = taskInput.value.trim();
+            if (text !== '') { tasks.push({ text: text, completed: false }); taskInput.value = ''; renderTasks(); }
+        }
+        taskInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') addTask(); });
+        function toggleTask(index) { tasks[index].completed = !tasks[index].completed; renderTasks(); }
+        function deleteTask(index) { tasks.splice(index, 1); renderTasks(); }
+        renderTasks();
+
+        /* --- عارض وقارئ ملفات الـ PDF مع طبقة الرسم والكتابة فوقه --- */
+        let pdfDoc = null,
+            pageNum = 1,
+            scale = 1.3;
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+        const pdfCanvas = document.getElementById('pdfCanvas');
+        const pdfCtx = pdfCanvas.getContext('2d');
+        const pdfDrawCanvas = document.getElementById('pdfDrawCanvas');
+        const pdfDrawCtx = pdfDrawCanvas.getContext('2d');
+        
+        let pdfDrawings = {}; // حفظ رسومات كل صفحة PDF بشكل منفصل
+
+        function handlePdfUpload(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                const fileReader = new FileReader();
+                fileReader.onload = function() {
+                    const typedarray = new Uint8Array(this.result);
+                    pdfjsLib.getDocument(typedarray).promise.then(function(pdfDoc_) {
+                        pdfDoc = pdfDoc_;
+                        document.getElementById('pdfStackWrapper').style.display = 'block';
+                        document.getElementById('pdfToolbar').style.display = 'flex';
+                        pageNum = 1;
+                        pdfDrawings = {};
+                        renderPdfPage(pageNum);
+                    }).catch(err => {
+                        alert('حدث خطأ أثناء قراءة ملف الـ PDF.');
+                        console.error(err);
+                    });
+                };
+                fileReader.readAsArrayBuffer(file);
+            }
+        }
+
+        function renderPdfPage(num) {
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({ scale: scale });
+                
+                const outputScale = window.devicePixelRatio || 1;
+                
+                pdfCanvas.width = Math.floor(viewport.width * outputScale);
+                pdfCanvas.height = Math.floor(viewport.height * outputScale);
+                pdfCanvas.style.width = Math.floor(viewport.width) + 'px';
+                pdfCanvas.style.height = Math.floor(viewport.height) + 'px';
+
+                pdfDrawCanvas.width = Math.floor(viewport.width * outputScale);
+                pdfDrawCanvas.height = Math.floor(viewport.height * outputScale);
+                pdfDrawCanvas.style.width = Math.floor(viewport.width) + 'px';
+                pdfDrawCanvas.style.height = Math.floor(viewport.height) + 'px';
+
+                pdfDrawCtx.scale(outputScale, outputScale);
+                pdfDrawCtx.lineCap = 'round';
+                pdfDrawCtx.lineJoin = 'round';
+
+                const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+                const renderContext = {
+                    canvasContext: pdfCtx,
+                    transform: transform,
+                    viewport: viewport
+                };
+
+                page.render(renderContext).promise.then(() => {
+                    restorePdfPageDrawing(num);
+                });
+            });
+            document.getElementById('pageCountDisplay').textContent = `صفحة ${num} / ${pdfDoc.numPages}`;
+        }
+
+        function prevPdfPage() {
+            if (pageNum <= 1) return;
+            savePdfPageDrawing(pageNum);
+            pageNum--;
+            renderPdfPage(pageNum);
+        }
+
+        function nextPdfPage() {
+            if (pageNum >= pdfDoc.numPages) return;
+            savePdfPageDrawing(pageNum);
+            pageNum++;
+            renderPdfPage(pageNum);
+        }
+
+        function savePdfPageDrawing(num) {
+            pdfDrawings[num] = pdfDrawCanvas.toDataURL();
+        }
+
+        function restorePdfPageDrawing(num) {
+            pdfDrawCtx.clearRect(0, 0, pdfDrawCanvas.width, pdfDrawCanvas.height);
+            if (pdfDrawings[num]) {
+                const img = new Image();
+                img.src = pdfDrawings[num];
+                img.onload = () => {
+                    pdfDrawCtx.drawImage(img, 0, 0, pdfDrawCanvas.width / (window.devicePixelRatio || 1), pdfDrawCanvas.height / (window.devicePixelRatio || 1));
+                }
+            }
+        }
+
+        function clearPdfDrawing() {
+            pdfDrawCtx.clearRect(0, 0, pdfDrawCanvas.width, pdfDrawCanvas.height);
+            delete pdfDrawings[pageNum];
+        }
+
+        let pdfPainting = false;
+        function getPdfPos(e) {
+            const rect = pdfDrawCanvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        pdfDrawCanvas.addEventListener('mousedown', (e) => {
+            pdfPainting = true;
+            const pos = getPdfPos(e);
+            pdfDrawCtx.beginPath();
+            pdfDrawCtx.moveTo(pos.x, pos.y);
+        });
+
+        pdfDrawCanvas.addEventListener('mouseup', () => {
+            pdfPainting = false;
+            pdfDrawCtx.beginPath();
+            savePdfPageDrawing(pageNum);
+        });
+
+        pdfDrawCanvas.addEventListener('mousemove', (e) => {
+            if (!pdfPainting) return;
+            const pos = getPdfPos(e);
+            pdfDrawCtx.strokeStyle = isEraserMode ? '#ffffff' : currentColor;
+            pdfDrawCtx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
+            pdfDrawCtx.lineTo(pos.x, pos.y);
+            pdfDrawCtx.stroke();
+            pdfDrawCtx.beginPath();
+            pdfDrawCtx.moveTo(pos.x, pos.y);
+        });
+
+        pdfDrawCanvas.addEventListener('touchstart', (e) => {
+            pdfPainting = true;
+            const pos = getPdfPos(e);
+            pdfDrawCtx.beginPath();
+            pdfDrawCtx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        });
+        pdfDrawCanvas.addEventListener('touchend', (e) => {
+            pdfPainting = false;
+            pdfDrawCtx.beginPath();
+            savePdfPageDrawing(pageNum);
+            e.preventDefault();
+        });
+        pdfDrawCanvas.addEventListener('touchmove', (e) => {
+            if (!pdfPainting) return;
+            const pos = getPdfPos(e);
+            pdfDrawCtx.strokeStyle = isEraserMode ? '#ffffff' : currentColor;
+            pdfDrawCtx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
+            pdfDrawCtx.lineTo(pos.x, pos.y);
+            pdfDrawCtx.stroke();
+            pdfDrawCtx.beginPath();
+            pdfDrawCtx.moveTo(pos.x, pos.y);
+            e.preventDefault();
+        });
+
+        /* --- السبورة التفاعلية العالية الدقة (HiDPI Canvas) --- */
+        const canvas = document.getElementById('whiteboard');
+        const ctx = canvas.getContext('2d');
+        const canvasWrapper = document.getElementById('canvasWrapper');
+
+        function resizeCanvas() {
+            const rect = canvasWrapper.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const tempImage = canvas.width > 0 ? canvas.toDataURL() : null;
+
+            canvas.width = rect.width * dpr;
+            canvas.height = 450 * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = '450px';
+
+            ctx.scale(dpr, dpr);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            if (tempImage) {
+                const img = new Image();
+                img.src = tempImage;
+                img.onload = () => { ctx.drawImage(img, 0, 0, rect.width, 450); }
+            }
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        
+        let painting = false;
+        let currentColor = '#000000';
+        let currentLineWidth = parseInt(document.getElementById('penSize').value);
+        let isEraserMode = false;
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function startPosition(e) {
+            painting = true;
+            const pos = getMousePos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            draw(e);
+        }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+            saveBoardState();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            const pos = getMousePos(e);
+            
+            ctx.strokeStyle = isEraserMode ? '#ffffff' : currentColor;
+            ctx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', (e) => { startPosition(e); e.preventDefault(); });
+        canvas.addEventListener('touchend', (e) => { endPosition(); e.preventDefault(); });
+        canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); });
+
+        function setPenColor(color, element) {
+            currentColor = color;
+            isEraserMode = false;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            if(element) element.classList.add('active');
+        }
+
+        function changePenSize(size) { currentLineWidth = parseInt(size); }
+        function setEraser() {
+            isEraserMode = true;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        function clearBoard() {
+            const rect = canvasWrapper.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, 450);
+            localStorage.removeItem('whiteboard_hd_image');
+        }
+
+        function downloadBoardImage() {
+            const link = document.createElement('a');
+            link.download = 'study-board-hd.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        function saveBoardState() {
+            localStorage.setItem('whiteboard_hd_image', canvas.toDataURL());
+        }
+
+        function redrawCanvas() {
+            const savedImage = localStorage.getItem('whiteboard_hd_image');
+            if (savedImage) {
+                const img = new Image();
+                img.src = savedImage;
+                img.onload = () => {
+                    const rect = canvasWrapper.getBoundingClientRect();
+                    ctx.drawImage(img, 0, 0, rect.width, 450);
+                }
+            }
+        }
+
+        setTimeout(() => {
+            resizeCanvas();
+            redrawCanvas();
+        }, 150);
+
+        /* --- تسجيل الشاشة والصوت للسبورة (MediaRecorder) --- */
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+
+        async function toggleRecordBoard() {
+            const recordBtn = document.getElementById('recordBoardBtn');
+            const statusText = document.getElementById('recordingStatusText');
+
+            if (!isRecording) {
+                try {
+                    const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null);
+                    const canvasStream = canvas.captureStream(30);
+                    let combinedStream = canvasStream;
+
+                    if (audioStream) {
+                        const audioTrack = audioStream.getAudioTracks()[0];
+                        combinedStream.addTrack(audioTrack);
+                    }
+
+                    recordedChunks = [];
+                    mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm; codecs=vp9' });
+
+                    mediaRecorder.ondataavailable = function(e) {
+                        if (e.data.size > 0) { recordedChunks.push(e.data); }
+                    };
+
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'study-session-hd.webm';
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        }, 100);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    recordBtn.innerHTML = `<i class="fa-solid fa-stop"></i> إيقاف وحفظ التسجيل`;
+                    recordBtn.className = `btn btn-danger`;
+                    statusText.innerHTML = `<span class="recording-indicator"></span>جاري تسجيل الشرح (صورة وصوت HD)...`;
+
+                } catch (err) {
+                    alert('تعذر الوصول إلى المايكروفون أو بدء التسجيل.');
+                    console.error(err);
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.innerHTML = `<i class="fa-solid fa-circle-dot"></i> تسجيل الشاشة والصوت`;
+                recordBtn.className = `btn btn-success`;
+                statusText.innerHTML = `تم حفظ فيديو الشرح بدقة عالية! 🎉`;
+                setTimeout(() => { statusText.innerHTML = ''; }, 4000);
+            }
+        }
+
+        /* --- رفع الصور السريعة --- */
+        const imagesGrid = document.getElementById('imagesGrid');
+        let studyImages = JSON.parse(localStorage.getItem('study_images')) || [];
+
+        function renderImages() {
+            imagesGrid.innerHTML = '';
+            studyImages.forEach((imgSrc, index) => {
+                const div = document.createElement('div');
+                div.className = 'image-card';
+                div.innerHTML = `
+                    <img src="${imgSrc}" onclick="openModal('${imgSrc}')">
+                    <button class="delete-img-btn" onclick="deleteImage(${index})"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                imagesGrid.appendChild(div);
+            });
+            localStorage.setItem('study_images', JSON.stringify(studyImages));
+        }
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) { studyImages.push(ev.target.result); renderImages(); };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = '';
+        }
+        function deleteImage(index) { studyImages.splice(index, 1); renderImages(); }
+
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        function openModal(src) { modal.style.display = 'flex'; modalImg.src = src; }
+        function closeModal() { modal.style.display = 'none'; }
+        renderImages();
+
+        /* --- المفكرة السريعة --- */
+        const notesArea = document.getElementById('notesArea');
+        const notesStatus = document.getElementById('notesStatus');
+        notesArea.value = localStorage.getItem('study_notes') || '';
+
+        notesArea.addEventListener('input', () => {
+            localStorage.setItem('study_notes', notesArea.value);
+            notesStatus.textContent = 'جاري الحفظ...';
+            setTimeout(() => { notesStatus.textContent = 'تم الحفظ تلقائياً'; }, 800);
+        });
+    </script>
+</body>
+</html>
