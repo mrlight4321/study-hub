@@ -10,19 +10,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة PDF.js لعرض ملفات الـ PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-    
     <style>
         :root {
             --primary: #4361ee;
             --primary-light: #4895ef;
             --secondary: #3f37c9;
             --accent: #f72585;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-main: #2b2d42;
-            --text-muted: #8d99ae;
+            --bg-color: #121212; /* خلفية سوداء للمنصة */
+            --card-bg: #1e1e1e;   /* خلفية الكروت الداكنة */
+            --text-main: #f8f9fa; /* نص أبيض واضح */
+            --text-muted: #adb5bd;
             --success: #4cc9f0;
             --radius: 16px;
+            --led-glow: 0 0 15px rgba(67, 97, 238, 0.4);
         }
 
         * {
@@ -41,21 +41,62 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #1f1f1f, #2d2d2d);
             color: white;
             padding: 2rem 1rem;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid var(--primary);
         }
 
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 0.3rem;
+            text-shadow: 0 0 10px rgba(67, 97, 238, 0.5);
         }
 
         header p {
             font-size: 1.1rem;
             opacity: 0.9;
+            color: var(--text-muted);
+        }
+
+        /* صندوق فيديو الشرح العائم (أعلى اليمين) */
+        .floating-video-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), var(--led-glow);
+            z-index: 9999;
+            border: 2px solid var(--primary);
+            overflow: hidden;
+            display: none; /* مخفي لحين تفعيله */
+        }
+
+        .floating-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .floating-body {
+            width: 100%;
+            height: 180px;
+            background: #000;
+        }
+
+        .floating-body video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* شريط أدوات تقسيم الشاشة العام */
@@ -96,24 +137,26 @@
             background: var(--card-bg);
             border-radius: var(--radius);
             padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
         }
 
         .card:hover {
             transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
         }
 
         .card h2 {
             font-size: 1.25rem;
             margin-bottom: 1rem;
-            color: var(--primary);
+            color: var(--primary-light);
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            border-bottom: 2px solid #f1f2f6;
+            border-bottom: 2px solid #2d2d2d;
             padding-bottom: 0.5rem;
         }
 
@@ -122,8 +165,9 @@
             font-size: 3rem;
             font-weight: 900;
             text-align: center;
-            color: var(--secondary);
+            color: var(--success);
             margin: 0.5rem 0;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
         }
 
         .timer-controls {
@@ -142,20 +186,43 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 0.9rem;
-            transition: background 0.2s;
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            box-shadow: 0 0 10px rgba(67, 97, 238, 0.3);
         }
 
-        .btn:hover { background: var(--secondary); }
+        .btn:hover {
+            background: var(--secondary);
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.6);
+        }
 
-        .btn-accent { background: var(--accent); }
-        .btn-accent:hover { background: #d90429; }
-        .btn-success { background: #2a9d8f; }
-        .btn-success:hover { background: #21867a; }
-        .btn-danger { background: #e63946; }
-        .btn-danger:hover { background: #c52230; }
+        .btn-accent {
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(247, 37, 133, 0.3);
+        }
+
+        .btn-accent:hover {
+            background: #d90429;
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.6);
+        }
+
+        .btn-success {
+            background: #2a9d8f;
+        }
+
+        .btn-success:hover {
+            background: #21867a;
+        }
+
+        .btn-danger {
+            background: #e63946;
+        }
+
+        .btn-danger:hover {
+            background: #c52230;
+        }
 
         /* تنسيق قائمة المهام */
         .task-input-group {
@@ -167,13 +234,18 @@
         .task-input-group input {
             flex: 1;
             padding: 0.6rem;
-            border: 2px solid #e9ecef;
+            border: 2px solid #2d2d2d;
+            background: #121212;
+            color: white;
             border-radius: 8px;
             font-size: 0.95rem;
             outline: none;
         }
 
-        .task-input-group input:focus { border-color: var(--primary); }
+        .task-input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(67, 97, 238, 0.4);
+        }
 
         .tasks-list {
             list-style: none;
@@ -186,7 +258,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #f8f9fa;
+            background: #121212;
+            border: 1px solid #2d2d2d;
             padding: 0.6rem 0.9rem;
             border-radius: 8px;
             margin-bottom: 0.4rem;
@@ -205,9 +278,15 @@
             font-size: 0.95rem;
         }
 
-        .delete-btn { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 1rem; }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-size: 1rem;
+        }
 
-        /* قسم عارض وقارئ الـ PDF مع إمكانية الكتابة فوقه */
+        /* قسم عارض وقارئ الـ PDF */
         .pdf-viewer-card {
             grid-column: 1 / -1;
         }
@@ -218,17 +297,18 @@
             align-items: center;
             margin-bottom: 1rem;
             flex-wrap: wrap;
-            background: #f8f9fa;
+            background: #121212;
             padding: 10px;
             border-radius: 10px;
+            border: 1px solid #2d2d2d;
         }
 
         .pdf-canvas-container {
             position: relative;
             width: 100%;
             height: 600px;
-            background: #f1f3f5;
-            border: 2px dashed #ced4da;
+            background: #121212;
+            border: 2px dashed #2d2d2d;
             border-radius: 10px;
             overflow: auto;
             display: flex;
@@ -244,7 +324,7 @@
         #pdfCanvas {
             display: block;
             background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         #pdfDrawCanvas {
@@ -266,9 +346,10 @@
             align-items: center;
             margin-bottom: 1rem;
             flex-wrap: wrap;
-            background: #f8f9fa;
+            background: #121212;
             padding: 10px;
             border-radius: 10px;
+            border: 1px solid #2d2d2d;
         }
 
         .tool-group {
@@ -282,23 +363,30 @@
             height: 28px;
             border-radius: 50%;
             border: 2px solid #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .color-btn:hover { transform: scale(1.1); }
-        .color-btn.active { border-color: var(--text-main); transform: scale(1.15); }
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
 
-        #blackPen { background-color: #000000; }
+        .color-btn.active {
+            border-color: var(--success);
+            transform: scale(1.15);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        #blackPen { background-color: #ffffff; }
         #redPen { background-color: #e63946; }
         #greenPen { background-color: #2a9d8f; }
 
         .size-selector {
             padding: 0.3rem;
             border-radius: 6px;
-            border: 1px solid #ced4da;
-            background: #fff;
+            border: 1px solid #2d2d2d;
+            background: #1e1e1e;
+            color: white;
             font-family: 'Tajawal', sans-serif;
             font-weight: 700;
             cursor: pointer;
@@ -309,9 +397,9 @@
             position: relative;
             width: 100%;
             height: 450px;
-            border: 2px dashed #ced4da;
+            border: 2px dashed #2d2d2d;
             border-radius: 10px;
-            background-color: #ffffff;
+            background-color: #000000; /* سبورة سوداء تليق بالوضع الداكن */
             overflow: hidden;
         }
 
@@ -340,26 +428,34 @@
         }
 
         /* تنسيق رفع الصور */
-        .image-upload-container { margin-bottom: 0.8rem; }
+        .image-upload-container {
+            margin-bottom: 0.8rem;
+        }
 
         .file-input-label {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            background: #f1f3f5;
-            border: 2px dashed #ced4da;
+            background: #121212;
+            border: 2px dashed #2d2d2d;
             padding: 0.6rem;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--primary-light);
             font-size: 0.9rem;
             transition: all 0.2s;
         }
 
-        .file-input-label:hover { background: #e9ecef; border-color: var(--primary); }
-        #imageInput, #pdfInput { display: none; }
+        .file-input-label:hover {
+            background: #2d2d2d;
+            border-color: var(--primary);
+        }
+
+        #imageInput, #pdfInput {
+            display: none;
+        }
 
         .images-grid {
             display: grid;
@@ -375,17 +471,22 @@
             border-radius: 6px;
             overflow: hidden;
             height: 80px;
-            background: #eee;
-            border: 1px solid #dee2e6;
+            background: #121212;
+            border: 1px solid #2d2d2d;
         }
 
-        .image-card img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
 
         .image-card .delete-img-btn {
             position: absolute;
             top: 2px;
             right: 2px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             border: none;
             border-radius: 50%;
@@ -402,34 +503,58 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 10000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             justify-content: center;
             align-items: center;
             padding: 1rem;
         }
 
-        .modal-content { max-width: 90%; max-height: 90vh; border-radius: 8px; }
-        .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; font-weight: bold; cursor: pointer; }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
         /* المفكرة السريعة */
         textarea.notes-area {
             width: 100%;
             height: 170px;
             padding: 0.7rem;
-            border: 2px solid #e9ecef;
+            border: 2px solid #2d2d2d;
+            background: #121212;
+            color: white;
             border-radius: 8px;
             font-size: 0.95rem;
             resize: none;
             outline: none;
             flex: 1;
         }
-        textarea.notes-area:focus { border-color: var(--primary); }
-        .notes-status { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; }
+
+        textarea.notes-area:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(67, 97, 238, 0.4);
+        }
+
+        .notes-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
 
         /* الروابط السريعة */
         .links-grid {
@@ -440,7 +565,8 @@
         }
 
         .quick-link {
-            background: #f1f3f5;
+            background: #121212;
+            border: 1px solid #2d2d2d;
             padding: 0.8rem;
             border-radius: 8px;
             text-align: center;
@@ -455,28 +581,43 @@
             gap: 0.4rem;
             transition: all 0.2s;
         }
-        .quick-link i { font-size: 1.5rem; color: var(--primary); }
-        .quick-link:hover { background: var(--primary); color: white; }
-        .quick-link:hover i { color: white; }
+
+        .quick-link i {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+        }
+
+        .quick-link:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(67, 97, 238, 0.5);
+        }
+
+        .quick-link:hover i {
+            color: white;
+        }
 
         /* شريط الحقوق أسفل الموقع */
         footer {
             text-align: center;
             padding: 1.5rem;
-            background: #ffffff;
+            background: #191919;
             color: var(--text-muted);
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid #2d2d2d;
             margin-top: auto;
             display: flex;
             flex-direction: column;
             gap: 0.3rem;
         }
+
         .footer-brand a {
             font-weight: 700;
-            color: var(--primary);
+            color: var(--primary-light);
             text-decoration: none;
             transition: opacity 0.2s;
         }
+
         .footer-brand a:hover {
             text-decoration: underline;
             opacity: 0.8;
@@ -485,18 +626,29 @@
 </head>
 <body>
 
+    <!-- صندوق فيديو الشرح العائم (أعلى اليمين) -->
+    <div class="floating-video-box" id="floatingVideoBox">
+        <div class="floating-header">
+            <span><i class="fa-solid fa-video"></i> شرح مستر مهاب سلامة</span>
+            <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="floating-body">
+            <video id="floatingVideoPlayer" autoplay playsinline controls></video>
+        </div>
+    </div>
+
     <header>
         <h1><i class="fa-solid fa-graduation-cap"></i> منصتي الدراسية Pro</h1>
         <p>تصفح ملفات الـ PDF واكتب عليها مباشرة، ارسم بدقة فائقة، وسجل شرحك الصوتي والصوري!</p>
     </header>
 
-    <!-- شريط أزرار تحكم التقسيم -->
+    <!-- شريط أزرار تحكم التقسيم وشرح المعلم -->
     <div class="global-tools-bar">
+        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-play-circle"></i> عرض شاشة شرح مستر مهاب</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
     </div>
 
     <div class="container" id="mainContainer">
-        
         <!-- قسم مؤقت بومودورو للتركيز -->
         <div class="card" id="card-pomodoro">
             <h2><i class="fa-solid fa-clock"></i> مؤقت التركيز</h2>
@@ -552,11 +704,10 @@
             </h2>
             <div class="board-tools">
                 <div class="tool-group">
-                    <button class="color-btn active" id="blackPen" onclick="setPenColor('#000000', this)" title="أسود"></button>
+                    <button class="color-btn active" id="blackPen" onclick="setPenColor('#ffffff', this)" title="أبيض (للخلفية السوداء)"></button>
                     <button class="color-btn" id="redPen" onclick="setPenColor('#e63946', this)" title="أحمر"></button>
                     <button class="color-btn" id="greenPen" onclick="setPenColor('#2a9d8f', this)" title="أخضر"></button>
                 </div>
-                
                 <div class="tool-group">
                     <label for="penSize" style="font-weight: 700; font-size: 0.85rem;">الخط:</label>
                     <select id="penSize" class="size-selector" onchange="changePenSize(this.value)">
@@ -566,7 +717,6 @@
                         <option value="16">عريض</option>
                     </select>
                 </div>
-
                 <div class="tool-group" style="margin-right: auto; gap: 0.4rem; flex-wrap: wrap;">
                     <button class="btn btn-success" id="recordBoardBtn" onclick="toggleRecordBoard()"><i class="fa-solid fa-circle-dot"></i> تسجيل الشاشة والصوت</button>
                     <button class="btn" onclick="downloadBoardImage()" style="background-color: var(--secondary);"><i class="fa-solid fa-image"></i> حفظ صورة</button>
@@ -608,7 +758,6 @@
                 <a href="https://www.youtube.com" target="_blank" class="quick-link"><i class="fa-brands fa-youtube"></i><span>يوتيوب</span></a>
             </div>
         </div>
-
     </div>
 
     <!-- Modal لعرض الصورة مكبرة -->
@@ -634,23 +783,52 @@
             const seconds = timeLeft % 60;
             timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
+
         function startTimer() {
             if (!isRunning) {
                 isRunning = true;
                 timerId = setInterval(() => {
-                    if (timeLeft > 0) { timeLeft--; updateTimerDisplay(); }
-                    else { clearInterval(timerId); isRunning = false; alert('انتهى وقت التركيز! خذ استراحة قصيرة ☕'); }
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerId);
+                        isRunning = false;
+                        alert('انتهى وقت التركيز! خذ استراحة قصيرة ☕');
+                    }
                 }, 1000);
             }
         }
-        function pauseTimer() { clearInterval(timerId); isRunning = false; }
-        function resetTimer() { clearInterval(timerId); isRunning = false; timeLeft = 25 * 60; updateTimerDisplay(); }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        /* --- نظام الفيديو العائم لشرح مستر مهاب --- */
+        function toggleFloatingVideo() {
+            const box = document.getElementById('floatingVideoBox');
+            if (box.style.display === 'none' || box.style.display === '') {
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        }
 
         /* --- نظام تقسيم الشاشة (Split Screen) --- */
         function toggleSplitScreen() {
             const container = document.getElementById('mainContainer');
             container.classList.toggle('split-view');
-            setTimeout(() => { resizeCanvas(); }, 300);
+            setTimeout(() => {
+                resizeCanvas();
+            }, 300);
         }
 
         /* --- قائمة المهام --- */
@@ -671,28 +849,39 @@
             });
             localStorage.setItem('study_tasks', JSON.stringify(tasks));
         }
+
         function addTask() {
             const text = taskInput.value.trim();
-            if (text !== '') { tasks.push({ text: text, completed: false }); taskInput.value = ''; renderTasks(); }
+            if (text !== '') {
+                tasks.push({ text: text, completed: false });
+                taskInput.value = '';
+                renderTasks();
+            }
         }
-        taskInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') addTask(); });
-        function toggleTask(index) { tasks[index].completed = !tasks[index].completed; renderTasks(); }
-        function deleteTask(index) { tasks.splice(index, 1); renderTasks(); }
+
+        taskInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addTask();
+        });
+
+        function toggleTask(index) {
+            tasks[index].completed = !tasks[index].completed;
+            renderTasks();
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
         renderTasks();
 
-        /* --- عارض وقارئ ملفات الـ PDF مع طبقة الرسم والكتابة فوقه --- */
-        let pdfDoc = null,
-            pageNum = 1,
-            scale = 1.3;
-        
+        /* --- عارض وقارئ ملفات الـ PDF --- */
+        let pdfDoc = null, pageNum = 1, scale = 1.3;
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
-
         const pdfCanvas = document.getElementById('pdfCanvas');
         const pdfCtx = pdfCanvas.getContext('2d');
         const pdfDrawCanvas = document.getElementById('pdfDrawCanvas');
         const pdfDrawCtx = pdfDrawCanvas.getContext('2d');
-        
-        let pdfDrawings = {}; // حفظ رسومات كل صفحة PDF بشكل منفصل
+        let pdfDrawings = {};
 
         function handlePdfUpload(e) {
             const file = e.target.files[0];
@@ -719,9 +908,7 @@
         function renderPdfPage(num) {
             pdfDoc.getPage(num).then(function(page) {
                 const viewport = page.getViewport({ scale: scale });
-                
                 const outputScale = window.devicePixelRatio || 1;
-                
                 pdfCanvas.width = Math.floor(viewport.width * outputScale);
                 pdfCanvas.height = Math.floor(viewport.height * outputScale);
                 pdfCanvas.style.width = Math.floor(viewport.width) + 'px';
@@ -737,12 +924,7 @@
                 pdfDrawCtx.lineJoin = 'round';
 
                 const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
-                const renderContext = {
-                    canvasContext: pdfCtx,
-                    transform: transform,
-                    viewport: viewport
-                };
-
+                const renderContext = { canvasContext: pdfCtx, transform: transform, viewport: viewport };
                 page.render(renderContext).promise.then(() => {
                     restorePdfPageDrawing(num);
                 });
@@ -789,10 +971,7 @@
             const rect = pdfDrawCanvas.getBoundingClientRect();
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
+            return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
         pdfDrawCanvas.addEventListener('mousedown', (e) => {
@@ -801,13 +980,11 @@
             pdfDrawCtx.beginPath();
             pdfDrawCtx.moveTo(pos.x, pos.y);
         });
-
         pdfDrawCanvas.addEventListener('mouseup', () => {
             pdfPainting = false;
             pdfDrawCtx.beginPath();
             savePdfPageDrawing(pageNum);
         });
-
         pdfDrawCanvas.addEventListener('mousemove', (e) => {
             if (!pdfPainting) return;
             const pos = getPdfPos(e);
@@ -819,31 +996,6 @@
             pdfDrawCtx.moveTo(pos.x, pos.y);
         });
 
-        pdfDrawCanvas.addEventListener('touchstart', (e) => {
-            pdfPainting = true;
-            const pos = getPdfPos(e);
-            pdfDrawCtx.beginPath();
-            pdfDrawCtx.moveTo(pos.x, pos.y);
-            e.preventDefault();
-        });
-        pdfDrawCanvas.addEventListener('touchend', (e) => {
-            pdfPainting = false;
-            pdfDrawCtx.beginPath();
-            savePdfPageDrawing(pageNum);
-            e.preventDefault();
-        });
-        pdfDrawCanvas.addEventListener('touchmove', (e) => {
-            if (!pdfPainting) return;
-            const pos = getPdfPos(e);
-            pdfDrawCtx.strokeStyle = isEraserMode ? '#ffffff' : currentColor;
-            pdfDrawCtx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
-            pdfDrawCtx.lineTo(pos.x, pos.y);
-            pdfDrawCtx.stroke();
-            pdfDrawCtx.beginPath();
-            pdfDrawCtx.moveTo(pos.x, pos.y);
-            e.preventDefault();
-        });
-
         /* --- السبورة التفاعلية العالية الدقة (HiDPI Canvas) --- */
         const canvas = document.getElementById('whiteboard');
         const ctx = canvas.getContext('2d');
@@ -853,27 +1005,23 @@
             const rect = canvasWrapper.getBoundingClientRect();
             const dpr = window.devicePixelRatio || 1;
             const tempImage = canvas.width > 0 ? canvas.toDataURL() : null;
-
             canvas.width = rect.width * dpr;
             canvas.height = 450 * dpr;
             canvas.style.width = rect.width + 'px';
             canvas.style.height = '450px';
-
             ctx.scale(dpr, dpr);
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-
             if (tempImage) {
                 const img = new Image();
                 img.src = tempImage;
                 img.onload = () => { ctx.drawImage(img, 0, 0, rect.width, 450); }
             }
         }
-        
+
         window.addEventListener('resize', resizeCanvas);
-        
         let painting = false;
-        let currentColor = '#000000';
+        let currentColor = '#ffffff'; // لون افتراضي أبيض يتناسب مع الخلفية السوداء
         let currentLineWidth = parseInt(document.getElementById('penSize').value);
         let isEraserMode = false;
 
@@ -881,10 +1029,7 @@
             const rect = canvas.getBoundingClientRect();
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
+            return { x: clientX - rect.left, y: clientY - rect.top };
         }
 
         function startPosition(e) {
@@ -904,10 +1049,8 @@
         function draw(e) {
             if (!painting) return;
             const pos = getMousePos(e);
-            
-            ctx.strokeStyle = isEraserMode ? '#ffffff' : currentColor;
+            ctx.strokeStyle = isEraserMode ? '#000000' : currentColor; // الممحاة تمسح بالأسود (لون الخلفية)
             ctx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
-
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             ctx.beginPath();
@@ -917,7 +1060,6 @@
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
-
         canvas.addEventListener('touchstart', (e) => { startPosition(e); e.preventDefault(); });
         canvas.addEventListener('touchend', (e) => { endPosition(); e.preventDefault(); });
         canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); });
@@ -929,7 +1071,10 @@
             if(element) element.classList.add('active');
         }
 
-        function changePenSize(size) { currentLineWidth = parseInt(size); }
+        function changePenSize(size) {
+            currentLineWidth = parseInt(size);
+        }
+
         function setEraser() {
             isEraserMode = true;
             document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
@@ -937,7 +1082,8 @@
 
         function clearBoard() {
             const rect = canvasWrapper.getBoundingClientRect();
-            ctx.clearRect(0, 0, rect.width, 450);
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, rect.width, 450);
             localStorage.removeItem('whiteboard_hd_image');
         }
 
@@ -961,6 +1107,8 @@
                     const rect = canvasWrapper.getBoundingClientRect();
                     ctx.drawImage(img, 0, 0, rect.width, 450);
                 }
+            } else {
+                clearBoard();
             }
         }
 
@@ -969,7 +1117,7 @@
             redrawCanvas();
         }, 150);
 
-        /* --- تسجيل الشاشة والصوت للسبورة (MediaRecorder) --- */
+        /* --- تسجيل الشاشة والصوت للسبورة --- */
         let mediaRecorder;
         let recordedChunks = [];
         let isRecording = false;
@@ -977,25 +1125,20 @@
         async function toggleRecordBoard() {
             const recordBtn = document.getElementById('recordBoardBtn');
             const statusText = document.getElementById('recordingStatusText');
-
             if (!isRecording) {
                 try {
                     const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null);
                     const canvasStream = canvas.captureStream(30);
                     let combinedStream = canvasStream;
-
                     if (audioStream) {
                         const audioTrack = audioStream.getAudioTracks()[0];
                         combinedStream.addTrack(audioTrack);
                     }
-
                     recordedChunks = [];
                     mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm; codecs=vp9' });
-
                     mediaRecorder.ondataavailable = function(e) {
                         if (e.data.size > 0) { recordedChunks.push(e.data); }
                     };
-
                     mediaRecorder.onstop = function() {
                         const blob = new Blob(recordedChunks, { type: 'video/webm' });
                         const url = URL.createObjectURL(blob);
@@ -1010,13 +1153,11 @@
                             window.URL.revokeObjectURL(url);
                         }, 100);
                     };
-
                     mediaRecorder.start();
                     isRecording = true;
                     recordBtn.innerHTML = `<i class="fa-solid fa-stop"></i> إيقاف وحفظ التسجيل`;
                     recordBtn.className = `btn btn-danger`;
                     statusText.innerHTML = `<span class="recording-indicator"></span>جاري تسجيل الشرح (صورة وصوت HD)...`;
-
                 } catch (err) {
                     alert('تعذر الوصول إلى المايكروفون أو بدء التسجيل.');
                     console.error(err);
@@ -1048,32 +1189,48 @@
             });
             localStorage.setItem('study_images', JSON.stringify(studyImages));
         }
+
         function handleImageUpload(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(ev) { studyImages.push(ev.target.result); renderImages(); };
+                reader.onload = function(ev) {
+                    studyImages.push(ev.target.result);
+                    renderImages();
+                };
                 reader.readAsDataURL(file);
             }
             e.target.value = '';
         }
-        function deleteImage(index) { studyImages.splice(index, 1); renderImages(); }
+
+        function deleteImage(index) {
+            studyImages.splice(index, 1);
+            renderImages();
+        }
 
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
-        function openModal(src) { modal.style.display = 'flex'; modalImg.src = src; }
-        function closeModal() { modal.style.display = 'none'; }
+
+        function openModal(src) {
+            modal.style.display = 'flex';
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
         renderImages();
 
         /* --- المفكرة السريعة --- */
         const notesArea = document.getElementById('notesArea');
         const notesStatus = document.getElementById('notesStatus');
         notesArea.value = localStorage.getItem('study_notes') || '';
-
         notesArea.addEventListener('input', () => {
             localStorage.setItem('study_notes', notesArea.value);
             notesStatus.textContent = 'جاري الحفظ...';
-            setTimeout(() => { notesStatus.textContent = 'تم الحفظ تلقائياً'; }, 800);
+            setTimeout(() => {
+                notesStatus.textContent = 'تم الحفظ تلقائياً';
+            }, 800);
         });
     </script>
 </body>
