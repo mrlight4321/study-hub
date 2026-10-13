@@ -16,9 +16,9 @@
             --primary-light: #4895ef;
             --secondary: #3f37c9;
             --accent: #f72585;
-            --bg-color: #121212; /* خلفية سوداء للمنصة */
-            --card-bg: #1e1e1e;   /* خلفية الكروت الداكنة */
-            --text-main: #f8f9fa; /* نص أبيض واضح */
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #f8f9fa;
             --text-muted: #adb5bd;
             --success: #4cc9f0;
             --radius: 16px;
@@ -61,7 +61,7 @@
             color: var(--text-muted);
         }
 
-        /* صندوق المتصفح العائم (أعلى اليمين) - منصة مستر مهاب سلامة بعرض عريض */
+        /* صندوق المتصفح العائم (أعلى اليمين) */
         .floating-video-box {
             position: fixed;
             top: 20px;
@@ -108,6 +108,7 @@
             justify-content: flex-end;
             gap: 0.5rem;
             width: 100%;
+            flex-wrap: wrap;
         }
 
         .container {
@@ -122,7 +123,6 @@
             transition: all 0.3s ease;
         }
 
-        /* نمط تقسيم الشاشة */
         .container.split-view {
             grid-template-columns: 1fr 1fr !important;
         }
@@ -160,7 +160,6 @@
             padding-bottom: 0.5rem;
         }
 
-        /* تنسيق مؤقت البومودورو */
         .timer-display {
             font-size: 3rem;
             font-weight: 900;
@@ -191,6 +190,7 @@
             align-items: center;
             gap: 0.4rem;
             box-shadow: 0 0 10px rgba(67, 97, 238, 0.3);
+            text-decoration: none;
         }
 
         .btn:hover {
@@ -224,7 +224,6 @@
             background: #c52230;
         }
 
-        /* تنسيق قائمة المهام */
         .task-input-group {
             display: flex;
             gap: 0.5rem;
@@ -286,7 +285,6 @@
             font-size: 1rem;
         }
 
-        /* قسم عارض وقارئ الـ PDF */
         .pdf-viewer-card {
             grid-column: 1 / -1;
         }
@@ -335,7 +333,6 @@
             touch-action: none;
         }
 
-        /* قسم السبورة التفاعلية بدقة عالية HD */
         .whiteboard-card {
             grid-column: 1 / -1;
         }
@@ -427,7 +424,6 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* تنسيق رفع الصور */
         .image-upload-container {
             margin-bottom: 0.8rem;
         }
@@ -499,7 +495,6 @@
             justify-content: center;
         }
 
-        /* Modal لعرض الصور */
         .modal {
             display: none;
             position: fixed;
@@ -530,7 +525,6 @@
             cursor: pointer;
         }
 
-        /* المفكرة السريعة */
         textarea.notes-area {
             width: 100%;
             height: 170px;
@@ -556,7 +550,6 @@
             margin-top: 0.4rem;
         }
 
-        /* الروابط السريعة */
         .links-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -598,7 +591,6 @@
             color: white;
         }
 
-        /* شريط الحقوق أسفل الموقع */
         footer {
             text-align: center;
             padding: 1.5rem;
@@ -626,14 +618,14 @@
 </head>
 <body>
 
-    <!-- صندوق منصة مستر مهاب سلامة العائم (أعلى اليمين) -->
+    <!-- صندوق متصفح جوجل العائم السريع (أعلى اليمين) -->
     <div class="floating-video-box" id="floatingVideoBox">
         <div class="floating-header">
-            <span><i class="fa-solid fa-graduation-cap"></i> منصة مستر مهاب سلامة</span>
+            <span><i class="fa-solid fa-globe"></i> متصفح جوجل السريع</span>
             <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;" title="إخفاء المربع"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="floating-body">
-            <iframe src="https://mohabsalama.com/dashboard" width="100%" height="100%" style="border:none;"></iframe>
+            <iframe src="https://www.google.com/search?igu=1" width="100%" height="100%" style="border:none;"></iframe>
         </div>
     </div>
 
@@ -642,9 +634,11 @@
         <p>تصفح ملفات الـ PDF واكتب عليها مباشرة، ارسم بدقة فائقة، وسجل شرحك الصوتي والصوري!</p>
     </header>
 
-    <!-- شريط أزرار تحكم التقسيم وشرح المعلم -->
+    <!-- شريط أزرار التحكم -->
     <div class="global-tools-bar">
-        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-graduation-cap"></i> إظهار/إخفاء المنصة</button>
+        <!-- زر فتح المنصة المباشر في تاب جديد لتسجيل الدخول بأمان -->
+        <a href="https://mohabsalama.com/dashboard" target="_blank" class="btn" style="background-color: var(--primary);"><i class="fa-solid fa-external-link-alt"></i> فتح لوحة تحكم المنصة (تسجيل الدخول)</a>
+        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
     </div>
 
@@ -772,7 +766,6 @@
     </footer>
 
     <script>
-        /* --- مؤقت بومودورو --- */
         let timeLeft = 25 * 60;
         let timerId = null;
         let isRunning = false;
@@ -812,7 +805,6 @@
             updateTimerDisplay();
         }
 
-        /* --- نظام المربع العائم للمنصة --- */
         function toggleFloatingVideo() {
             const box = document.getElementById('floatingVideoBox');
             if (box.style.display === 'none' || box.style.display === '') {
@@ -822,7 +814,6 @@
             }
         }
 
-        /* --- نظام تقسيم الشاشة (Split Screen) --- */
         function toggleSplitScreen() {
             const container = document.getElementById('mainContainer');
             container.classList.toggle('split-view');
@@ -831,7 +822,6 @@
             }, 300);
         }
 
-        /* --- قائمة المهام --- */
         const taskInput = document.getElementById('taskInput');
         const tasksList = document.getElementById('tasksList');
         let tasks = JSON.parse(localStorage.getItem('study_tasks')) || [];
@@ -875,7 +865,6 @@
 
         renderTasks();
 
-        /* --- عارض وقارئ ملفات الـ PDF --- */
         let pdfDoc = null, pageNum = 1, scale = 1.3;
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
         const pdfCanvas = document.getElementById('pdfCanvas');
@@ -1003,7 +992,6 @@
             pdfDrawCtx.moveTo(pos.x, pos.y);
         });
 
-        /* --- السبورة التفاعلية العالية الدقة (HiDPI Canvas) --- */
         const canvas = document.getElementById('whiteboard');
         const ctx = canvas.getContext('2d');
         const canvasWrapper = document.getElementById('canvasWrapper');
@@ -1130,7 +1118,6 @@
             redrawCanvas();
         }, 150);
 
-        /* --- تسجيل الشاشة والصوت للسبورة --- */
         let mediaRecorder;
         let recordedChunks = [];
         let isRecording = false;
@@ -1185,7 +1172,6 @@
             }
         }
 
-        /* --- رفع الصور السريعة --- */
         const imagesGrid = document.getElementById('imagesGrid');
         let studyImages = JSON.parse(localStorage.getItem('study_images')) || [];
 
@@ -1235,7 +1221,6 @@
 
         renderImages();
 
-        /* --- المفكرة السريعة --- */
         const notesArea = document.getElementById('notesArea');
         const notesStatus = document.getElementById('notesStatus');
         notesArea.value = localStorage.getItem('study_notes') || '';
