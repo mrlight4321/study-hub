@@ -61,7 +61,7 @@
             color: var(--text-muted);
         }
 
-        /* صندوق المتصفح المصغر العائم (أعلى اليمين) */
+        /* صندوق المتصفح المصغر العائم (أعلى اليمين) - متصفح جوجل */
         .floating-video-box {
             position: fixed;
             top: 20px;
@@ -89,40 +89,14 @@
 
         .floating-body {
             width: 100%;
-            height: 200px;
+            height: 320px;
             background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 15px;
+            padding: 0;
             text-align: center;
-            gap: 10px;
-        }
-
-        .floating-body p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .platform-link-btn {
-            background: var(--accent);
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            box-shadow: 0 0 10px rgba(247, 37, 133, 0.4);
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .platform-link-btn:hover {
-            background: #d90429;
-            box-shadow: 0 0 15px rgba(247, 37, 133, 0.7);
         }
 
         /* شريط أدوات تقسيم الشاشة العام */
@@ -652,17 +626,14 @@
 </head>
 <body>
 
-    <!-- صندوق متصفح الشرح العائم (أعلى اليمين) مرتبط بمنصة مستر مهاب سلامة -->
+    <!-- صندوق متصفح جوجل العائم (أعلى اليمين) -->
     <div class="floating-video-box" id="floatingVideoBox">
         <div class="floating-header">
-            <span><i class="fa-solid fa-play-circle"></i> منصة مستر مهاب سلامة</span>
+            <span><i class="fa-solid fa-globe"></i> متصفح جوجل السريع</span>
             <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;" title="إخفاء المربع"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="floating-body">
-            <p>انقر لفتح محاضراتك والبدء في الشرح مباشرة بجوار أدواتك الدراسية:</p>
-            <a href="https://mohabsalama.com/dashboard?sn=my_lectures" target="_blank" class="platform-link-btn">
-                <i class="fa-solid fa-external-link-alt"></i> فتح المنصة في نافذة الشرح
-            </a>
+            <iframe src="https://www.google.com/search?igu=1" width="100%" height="100%" style="border:none;"></iframe>
         </div>
     </div>
 
@@ -673,7 +644,7 @@
 
     <!-- شريط أزرار تحكم التقسيم وشرح المعلم -->
     <div class="global-tools-bar">
-        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-play-circle"></i> إظهار/إخفاء نافذة المنصة</button>
+        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
     </div>
 
@@ -901,6 +872,7 @@
             tasks.splice(index, 1);
             renderTasks();
         }
+
         renderTasks();
 
         /* --- عارض وقارئ ملفات الـ PDF --- */
@@ -953,7 +925,11 @@
                 pdfDrawCtx.lineJoin = 'round';
 
                 const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
-                const renderContext = { canvasContext: pdfCtx, transform: transform, viewport: viewport };
+                const renderContext = {
+                    canvasContext: pdfCtx,
+                    transform: transform,
+                    viewport: viewport
+                };
                 page.render(renderContext).promise.then(() => {
                     restorePdfPageDrawing(num);
                 });
@@ -1009,11 +985,13 @@
             pdfDrawCtx.beginPath();
             pdfDrawCtx.moveTo(pos.x, pos.y);
         });
+
         pdfDrawCanvas.addEventListener('mouseup', () => {
             pdfPainting = false;
             pdfDrawCtx.beginPath();
             savePdfPageDrawing(pageNum);
         });
+
         pdfDrawCanvas.addEventListener('mousemove', (e) => {
             if (!pdfPainting) return;
             const pos = getPdfPos(e);
@@ -1034,21 +1012,26 @@
             const rect = canvasWrapper.getBoundingClientRect();
             const dpr = window.devicePixelRatio || 1;
             const tempImage = canvas.width > 0 ? canvas.toDataURL() : null;
+
             canvas.width = rect.width * dpr;
             canvas.height = 450 * dpr;
             canvas.style.width = rect.width + 'px';
             canvas.style.height = '450px';
+
             ctx.scale(dpr, dpr);
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
+
             if (tempImage) {
                 const img = new Image();
                 img.src = tempImage;
-                img.onload = () => { ctx.drawImage(img, 0, 0, rect.width, 450); }
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, rect.width, 450);
+                }
             }
         }
-
         window.addEventListener('resize', resizeCanvas);
+
         let painting = false;
         let currentColor = '#ffffff';
         let currentLineWidth = parseInt(document.getElementById('penSize').value);
@@ -1089,6 +1072,7 @@
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
+
         canvas.addEventListener('touchstart', (e) => { startPosition(e); e.preventDefault(); });
         canvas.addEventListener('touchend', (e) => { endPosition(); e.preventDefault(); });
         canvas.addEventListener('touchmove', (e) => { draw(e); e.preventDefault(); });
@@ -1248,12 +1232,14 @@
         function closeModal() {
             modal.style.display = 'none';
         }
+
         renderImages();
 
         /* --- المفكرة السريعة --- */
         const notesArea = document.getElementById('notesArea');
         const notesStatus = document.getElementById('notesStatus');
         notesArea.value = localStorage.getItem('study_notes') || '';
+
         notesArea.addEventListener('input', () => {
             localStorage.setItem('study_notes', notesArea.value);
             notesStatus.textContent = 'جاري الحفظ...';
