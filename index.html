@@ -61,19 +61,19 @@
             color: var(--text-muted);
         }
 
-        /* صندوق فيديو الشرح العائم (أعلى اليمين) */
+        /* صندوق المتصفح المصغر العائم (أعلى اليمين) */
         .floating-video-box {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 320px;
+            width: 360px;
             background: var(--card-bg);
             border-radius: var(--radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), var(--led-glow);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), var(--led-glow);
             z-index: 9999;
             border: 2px solid var(--primary);
             overflow: hidden;
-            display: none; /* مخفي لحين تفعيله */
+            display: block;
         }
 
         .floating-header {
@@ -89,14 +89,40 @@
 
         .floating-body {
             width: 100%;
-            height: 180px;
+            height: 200px;
             background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+            gap: 10px;
         }
 
-        .floating-body video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .floating-body p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .platform-link-btn {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(247, 37, 133, 0.4);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .platform-link-btn:hover {
+            background: #d90429;
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.7);
         }
 
         /* شريط أدوات تقسيم الشاشة العام */
@@ -335,7 +361,7 @@
             touch-action: none;
         }
 
-        /* قسم السبورة التفاعلية العادية بدقة عالية HD */
+        /* قسم السبورة التفاعلية بدقة عالية HD */
         .whiteboard-card {
             grid-column: 1 / -1;
         }
@@ -399,7 +425,7 @@
             height: 450px;
             border: 2px dashed #2d2d2d;
             border-radius: 10px;
-            background-color: #000000; /* سبورة سوداء تليق بالوضع الداكن */
+            background-color: #000000;
             overflow: hidden;
         }
 
@@ -626,14 +652,17 @@
 </head>
 <body>
 
-    <!-- صندوق فيديو الشرح العائم (أعلى اليمين) -->
+    <!-- صندوق متصفح الشرح العائم (أعلى اليمين) مرتبط بمنصة مستر مهاب سلامة -->
     <div class="floating-video-box" id="floatingVideoBox">
         <div class="floating-header">
-            <span><i class="fa-solid fa-video"></i> شرح مستر مهاب سلامة</span>
-            <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <span><i class="fa-solid fa-play-circle"></i> منصة مستر مهاب سلامة</span>
+            <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;" title="إخفاء المربع"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="floating-body">
-            <video id="floatingVideoPlayer" autoplay playsinline controls></video>
+            <p>انقر لفتح محاضراتك والبدء في الشرح مباشرة بجوار أدواتك الدراسية:</p>
+            <a href="https://mohabsalama.com/dashboard?sn=my_lectures" target="_blank" class="platform-link-btn">
+                <i class="fa-solid fa-external-link-alt"></i> فتح المنصة في نافذة الشرح
+            </a>
         </div>
     </div>
 
@@ -644,7 +673,7 @@
 
     <!-- شريط أزرار تحكم التقسيم وشرح المعلم -->
     <div class="global-tools-bar">
-        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-play-circle"></i> عرض شاشة شرح مستر مهاب</button>
+        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-play-circle"></i> إظهار/إخفاء نافذة المنصة</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
     </div>
 
@@ -812,7 +841,7 @@
             updateTimerDisplay();
         }
 
-        /* --- نظام الفيديو العائم لشرح مستر مهاب --- */
+        /* --- نظام المربع العائم للمنصة --- */
         function toggleFloatingVideo() {
             const box = document.getElementById('floatingVideoBox');
             if (box.style.display === 'none' || box.style.display === '') {
@@ -1021,7 +1050,7 @@
 
         window.addEventListener('resize', resizeCanvas);
         let painting = false;
-        let currentColor = '#ffffff'; // لون افتراضي أبيض يتناسب مع الخلفية السوداء
+        let currentColor = '#ffffff';
         let currentLineWidth = parseInt(document.getElementById('penSize').value);
         let isEraserMode = false;
 
@@ -1049,7 +1078,7 @@
         function draw(e) {
             if (!painting) return;
             const pos = getMousePos(e);
-            ctx.strokeStyle = isEraserMode ? '#000000' : currentColor; // الممحاة تمسح بالأسود (لون الخلفية)
+            ctx.strokeStyle = isEraserMode ? '#000000' : currentColor;
             ctx.lineWidth = isEraserMode ? currentLineWidth * 3 : currentLineWidth;
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
