@@ -333,6 +333,20 @@
             touch-action: none;
         }
 
+        /* تنسيق خانة الكتابة الحرة المضافة فوق الـ PDF */
+        .pdf-text-input {
+            position: absolute;
+            background: transparent;
+            border: 1px dashed var(--primary-light);
+            outline: none;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+            z-index: 1000;
+            resize: both;
+            font-family: 'Tajawal', sans-serif;
+        }
+
         .whiteboard-card {
             grid-column: 1 / -1;
         }
@@ -374,9 +388,11 @@
             box-shadow: 0 0 8px var(--success);
         }
 
-        #blackPen { background-color: #ffffff; }
+        /* أزرار الألوان المحدثة (أسود، أحمر، أخضر، أزرق) */
+        #blackPen { background-color: #000000; }
         #redPen { background-color: #e63946; }
         #greenPen { background-color: #2a9d8f; }
+        #bluePen { background-color: #4361ee; }
 
         .size-selector {
             padding: 0.3rem;
@@ -636,7 +652,6 @@
 
     <!-- شريط أزرار التحكم -->
     <div class="global-tools-bar">
-        <!-- زر فتح المنصة المباشر في تاب جديد لتسجيل الدخول بأمان -->
         <a href="https://mohabsalama.com/dashboard" target="_blank" class="btn" style="background-color: var(--primary);"><i class="fa-solid fa-external-link-alt"></i> فتح لوحة تحكم المنصة (تسجيل الدخول)</a>
         <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
@@ -664,24 +679,40 @@
             <ul class="tasks-list" id="tasksList"></ul>
         </div>
 
-        <!-- قسم عارض وملف الـ PDF مع إمكانية الكتابة الفوقية -->
+        <!-- قسم عارض وملف الـ PDF مع أداة الكتابة والألوان -->
         <div class="card pdf-viewer-card" id="card-pdf">
             <h2>
-                <i class="fa-solid fa-file-pdf"></i> قارئ وملفات الـ PDF (مع خاصية الكتابة فوقه)
+                <i class="fa-solid fa-file-pdf"></i> قارئ وملفات الـ PDF (عالي الدقة + كتابة ملونة)
                 <span id="pdfPageInfo" style="font-size: 0.85rem; margin-right: auto; font-weight: normal; color: var(--text-muted);"></span>
             </h2>
             <div class="image-upload-container">
                 <label for="pdfInput" class="file-input-label">
-                    <i class="fa-solid fa-file-arrow-up"></i> اختر ملف PDF لاستعراضه والكتابة عليه
+                    <i class="fa-solid fa-file-arrow-up"></i> اختر ملف PDF لاستعراضه والكتابة عليه بجودة عالية
                 </label>
                 <input type="file" id="pdfInput" accept="application/pdf" onchange="handlePdfUpload(event)">
             </div>
+            
+            <!-- شريط الأدوات المخصص للـ PDF (ألوان الكتابة وزر إضافة النص) -->
             <div class="pdf-controls" id="pdfToolbar" style="display: none;">
                 <button class="btn" onclick="prevPdfPage()"><i class="fa-solid fa-arrow-right"></i> السابقة</button>
                 <span id="pageCountDisplay" style="font-weight: 700; font-size: 0.9rem;">صفحة 0 / 0</span>
                 <button class="btn" onclick="nextPdfPage()"><i class="fa-solid fa-arrow-left"></i> التالية</button>
-                <button class="btn btn-accent" onclick="clearPdfDrawing()" style="margin-right: auto;"><i class="fa-solid fa-eraser"></i> مسح الكتابة عن هذه الصفحة</button>
+                
+                <!-- أزرار الألوان (أسود، أحمر، أخضر، أزرق) -->
+                <div style="display: flex; gap: 6px; align-items: center; margin-right: 10px;">
+                    <span style="font-size: 0.85rem;">لون الكتابة:</span>
+                    <button class="color-btn active" onclick="setPdfTextColor('black', this)" style="background: black; width: 24px; height: 24px;" title="أسود"></button>
+                    <button class="color-btn" onclick="setPdfTextColor('red', this)" style="background: red; width: 24px; height: 24px;" title="أحمر"></button>
+                    <button class="color-btn" onclick="setPdfTextColor('green', this)" style="background: green; width: 24px; height: 24px;" title="أخضر"></button>
+                    <button class="color-btn" onclick="setPdfTextColor('blue', this)" style="background: blue; width: 24px; height: 24px;" title="أزرق"></button>
+                </div>
+
+                <!-- زر إضافة خانة نصية حرة -->
+                <button class="btn" id="addPdfTextBtn" onclick="addPdfTextField()" style="background-color: var(--primary);"><i class="fa-solid fa-font"></i> إضافة كتابة</button>
+
+                <button class="btn btn-accent" onclick="clearPdfDrawing()" style="margin-right: auto;"><i class="fa-solid fa-eraser"></i> مسح الرسم عن الصفحة</button>
             </div>
+
             <div class="pdf-canvas-container" id="pdfContainerWrapper">
                 <div class="pdf-stack-wrapper" id="pdfStackWrapper" style="display: none;">
                     <canvas id="pdfCanvas"></canvas>
@@ -698,9 +729,10 @@
             </h2>
             <div class="board-tools">
                 <div class="tool-group">
-                    <button class="color-btn active" id="blackPen" onclick="setPenColor('#ffffff', this)" title="أبيض (للخلفية السوداء)"></button>
+                    <button class="color-btn active" id="blackPen" onclick="setPenColor('#000000', this)" title="أسود"></button>
                     <button class="color-btn" id="redPen" onclick="setPenColor('#e63946', this)" title="أحمر"></button>
                     <button class="color-btn" id="greenPen" onclick="setPenColor('#2a9d8f', this)" title="أخضر"></button>
+                    <button class="color-btn" id="bluePen" onclick="setPenColor('#4361ee', this)" title="أزرق"></button>
                 </div>
                 <div class="tool-group">
                     <label for="penSize" style="font-weight: 700; font-size: 0.85rem;">الخط:</label>
@@ -865,13 +897,41 @@
 
         renderTasks();
 
-        let pdfDoc = null, pageNum = 1, scale = 1.3;
+        // --- إعدادات الـ PDF عالية الدقة وأداة الكتابة ---
+        let pdfDoc = null, pageNum = 1, pdfScale = 2.2; // رفع مقياس الدقة لضمان وضوح تام
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
         const pdfCanvas = document.getElementById('pdfCanvas');
         const pdfCtx = pdfCanvas.getContext('2d');
         const pdfDrawCanvas = document.getElementById('pdfDrawCanvas');
         const pdfDrawCtx = pdfDrawCanvas.getContext('2d');
         let pdfDrawings = {};
+        let currentPdfTextColor = 'black';
+
+        function setPdfTextColor(color, btn) {
+            currentPdfTextColor = color;
+            document.querySelectorAll('#pdfToolbar .color-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+        }
+
+        function addPdfTextField() {
+            const container = document.getElementById('pdfStackWrapper');
+            if(!container) return;
+
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.placeholder = 'اكتب هنا...';
+            textInput.className = 'pdf-text-input';
+            textInput.style.top = '120px';
+            textInput.style.left = '120px';
+            textInput.style.color = currentPdfTextColor;
+
+            textInput.addEventListener('input', function() {
+                this.style.color = currentPdfTextColor;
+            });
+
+            container.appendChild(textInput);
+            textInput.focus();
+        }
 
         function handlePdfUpload(e) {
             const file = e.target.files[0];
@@ -897,7 +957,7 @@
 
         function renderPdfPage(num) {
             pdfDoc.getPage(num).then(function(page) {
-                const viewport = page.getViewport({ scale: scale });
+                const viewport = page.getViewport({ scale: pdfScale });
                 const outputScale = window.devicePixelRatio || 1;
                 pdfCanvas.width = Math.floor(viewport.width * outputScale);
                 pdfCanvas.height = Math.floor(viewport.height * outputScale);
@@ -1021,7 +1081,7 @@
         window.addEventListener('resize', resizeCanvas);
 
         let painting = false;
-        let currentColor = '#ffffff';
+        let currentColor = '#000000';
         let currentLineWidth = parseInt(document.getElementById('penSize').value);
         let isEraserMode = false;
 
@@ -1068,7 +1128,7 @@
         function setPenColor(color, element) {
             currentColor = color;
             isEraserMode = false;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.whiteboard-card .color-btn').forEach(btn => btn.classList.remove('active'));
             if(element) element.classList.add('active');
         }
 
@@ -1078,7 +1138,7 @@
 
         function setEraser() {
             isEraserMode = true;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.whiteboard-card .color-btn').forEach(btn => btn.classList.remove('active'));
         }
 
         function clearBoard() {
