@@ -388,7 +388,6 @@
             box-shadow: 0 0 8px var(--success);
         }
 
-        /* أزرار الألوان المحدثة (أسود، أحمر، أخضر، أزرق) */
         #blackPen { background-color: #000000; }
         #redPen { background-color: #e63946; }
         #greenPen { background-color: #2a9d8f; }
@@ -650,10 +649,9 @@
         <p>تصفح ملفات الـ PDF واكتب عليها مباشرة، ارسم بدقة فائقة، وسجل شرحك الصوتي والصوري!</p>
     </header>
 
-    <!-- شريط أزرار التحكم -->
+    <!-- شريط أزرار التحكم (تمت إزالة زر لوحة التحكم وبقي الزر الأحمر والأخضر) -->
     <div class="global-tools-bar">
-        <a href="https://mohabsalama.com/dashboard" target="_blank" class="btn" style="background-color: var(--primary);"><i class="fa-solid fa-external-link-alt"></i> فتح لوحة تحكم المنصة (تسجيل الدخول)</a>
-        <button class="btn" onclick="toggleFloatingVideo()" style="background-color: var(--accent);"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
+        <button class="btn btn-accent" onclick="toggleFloatingVideo()"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
         <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
     </div>
 
@@ -898,7 +896,7 @@
         renderTasks();
 
         // --- إعدادات الـ PDF عالية الدقة وأداة الكتابة ---
-        let pdfDoc = null, pageNum = 1, pdfScale = 2.2; // رفع مقياس الدقة لضمان وضوح تام
+        let pdfDoc = null, pageNum = 1, pdfScale = 2.2;
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
         const pdfCanvas = document.getElementById('pdfCanvas');
         const pdfCtx = pdfCanvas.getContext('2d');
