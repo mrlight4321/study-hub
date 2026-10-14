@@ -61,56 +61,6 @@
             color: var(--text-muted);
         }
 
-        /* صندوق المتصفح العائم (أعلى اليمين) */
-        .floating-video-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 520px;
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), var(--led-glow);
-            z-index: 9999;
-            border: 2px solid var(--primary);
-            overflow: hidden;
-            display: block;
-        }
-
-        .floating-header {
-            background: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .floating-body {
-            width: 100%;
-            height: 380px;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
-            text-align: center;
-        }
-
-        /* شريط أدوات تقسيم الشاشة العام */
-        .global-tools-bar {
-            max-width: 1200px;
-            margin: 1rem auto 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-            width: 100%;
-            flex-wrap: wrap;
-        }
-
         .container {
             max-width: 1200px;
             margin: 1.5rem auto;
@@ -120,17 +70,6 @@
             gap: 2rem;
             flex: 1;
             width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .container.split-view {
-            grid-template-columns: 1fr 1fr !important;
-        }
-
-        @media (max-width: 900px) {
-            .container.split-view {
-                grid-template-columns: 1fr !important;
-            }
         }
 
         .card {
@@ -333,7 +272,6 @@
             touch-action: none;
         }
 
-        /* تنسيق خانة الكتابة الحرة المضافة فوق الـ PDF */
         .pdf-text-input {
             position: absolute;
             background: transparent;
@@ -633,27 +571,10 @@
 </head>
 <body>
 
-    <!-- صندوق متصفح جوجل العائم السريع (أعلى اليمين) -->
-    <div class="floating-video-box" id="floatingVideoBox">
-        <div class="floating-header">
-            <span><i class="fa-solid fa-globe"></i> متصفح جوجل السريع</span>
-            <button onclick="toggleFloatingVideo()" style="background:none; border:none; color:white; cursor:pointer;" title="إخفاء المربع"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="floating-body">
-            <iframe src="https://www.google.com/search?igu=1" width="100%" height="100%" style="border:none;"></iframe>
-        </div>
-    </div>
-
     <header>
         <h1><i class="fa-solid fa-graduation-cap"></i> منصتي الدراسية Pro</h1>
         <p>تصفح ملفات الـ PDF واكتب عليها مباشرة، ارسم بدقة فائقة، وسجل شرحك الصوتي والصوري!</p>
     </header>
-
-    <!-- شريط أزرار التحكم (تمت إزالة زر لوحة التحكم وبقي الزر الأحمر والأخضر) -->
-    <div class="global-tools-bar">
-        <button class="btn btn-accent" onclick="toggleFloatingVideo()"><i class="fa-solid fa-globe"></i> إظهار/إخفاء متصفح جوجل</button>
-        <button class="btn btn-success" onclick="toggleSplitScreen()"><i class="fa-solid fa-columns"></i> تبديل وضع تقسيم الشاشة</button>
-    </div>
 
     <div class="container" id="mainContainer">
         <!-- قسم مؤقت بومودورو للتركيز -->
@@ -833,23 +754,6 @@
             isRunning = false;
             timeLeft = 25 * 60;
             updateTimerDisplay();
-        }
-
-        function toggleFloatingVideo() {
-            const box = document.getElementById('floatingVideoBox');
-            if (box.style.display === 'none' || box.style.display === '') {
-                box.style.display = 'block';
-            } else {
-                box.style.display = 'none';
-            }
-        }
-
-        function toggleSplitScreen() {
-            const container = document.getElementById('mainContainer');
-            container.classList.toggle('split-view');
-            setTimeout(() => {
-                resizeCanvas();
-            }, 300);
         }
 
         const taskInput = document.getElementById('taskInput');
